@@ -17,11 +17,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.scwang.refreshlayout.R;
-import com.scwang.refreshlayout.activity.style.BezierStyleActivity;
-import com.scwang.refreshlayout.activity.style.CircleStyleActivity;
+import com.scwang.refreshlayout.activity.style.BezierCircleStyleActivity;
+import com.scwang.refreshlayout.activity.style.BezierRadarStyleActivity;
 import com.scwang.refreshlayout.activity.style.ClassicsStyleActivity;
 import com.scwang.refreshlayout.activity.style.DeliveryStyleActivity;
-import com.scwang.refreshlayout.activity.style.DropboxStyleActivity;
+import com.scwang.refreshlayout.activity.style.DropBoxStyleActivity;
 import com.scwang.refreshlayout.activity.style.FlyRefreshStyleActivity;
 import com.scwang.refreshlayout.activity.style.FunGameBattleCityStyleActivity;
 import com.scwang.refreshlayout.activity.style.FunGameHitBlockStyleActivity;
@@ -30,19 +30,26 @@ import com.scwang.refreshlayout.activity.style.PhoenixStyleActivity;
 import com.scwang.refreshlayout.activity.style.StoreHouseStyleActivity;
 import com.scwang.refreshlayout.activity.style.TaurusStyleActivity;
 import com.scwang.refreshlayout.activity.style.WaterDropStyleActivity;
-import com.scwang.refreshlayout.activity.style.WaveSwipStyleActivity;
+import com.scwang.refreshlayout.activity.style.WaveSwipeStyleActivity;
 import com.scwang.refreshlayout.adapter.BaseRecyclerAdapter;
 import com.scwang.refreshlayout.adapter.SmartViewHolder;
 import com.scwang.refreshlayout.util.StatusBarUtil;
-import com.scwang.smartrefresh.header.DropboxHeader;
+import com.scwang.smartrefresh.header.BezierCircleHeader;
+import com.scwang.smartrefresh.header.DeliveryHeader;
+import com.scwang.smartrefresh.header.DropBoxHeader;
 import com.scwang.smartrefresh.header.FunGameHitBlockHeader;
+import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.header.PhoenixHeader;
+import com.scwang.smartrefresh.header.TaurusHeader;
+import com.scwang.smartrefresh.layout.api.RefreshFooter;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.scwang.smartrefresh.layout.impl.RefreshFooterWrapper;
 import com.scwang.smartrefresh.layout.impl.RefreshHeaderWrapper;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener;
 
 import java.util.Arrays;
 
@@ -59,17 +66,17 @@ public class RefreshStylesFragment extends Fragment implements AdapterView.OnIte
     private enum Item {
         Hidden(R.string.title_activity_style_delivery,DeliveryStyleActivity.class),
         Delivery(R.string.title_activity_style_delivery,DeliveryStyleActivity.class),
-        Dropbox(R.string.title_activity_style_dropbox, DropboxStyleActivity.class),
-        FlyRefresh(R.string.title_activity_style_flyrefresh, FlyRefreshStyleActivity.class),
-        WaveSwipe(R.string.title_activity_style_wave_swip, WaveSwipStyleActivity.class),
+        DropBox(R.string.title_activity_style_drop_box, DropBoxStyleActivity.class),
+        WaveSwipe(R.string.title_activity_style_wave_swipe, WaveSwipeStyleActivity.class),
+        FlyRefresh(R.string.title_activity_style_fly_refresh, FlyRefreshStyleActivity.class),
         WaterDrop(R.string.title_activity_style_water_drop, WaterDropStyleActivity.class),
         Material(R.string.title_activity_style_material, MaterialStyleActivity.class),
         Phoenix(R.string.title_activity_style_phoenix, PhoenixStyleActivity.class),
         Taurus(R.string.title_activity_style_taurus, TaurusStyleActivity.class),
-        Bezier(R.string.title_activity_style_bezier, BezierStyleActivity.class),
-        Circle(R.string.title_activity_style_circle, CircleStyleActivity.class),
-        FunGameHitBlock(R.string.title_activity_style_fungame_hitblock, FunGameHitBlockStyleActivity.class),
-        FunGameBattleCity(R.string.title_activity_style_fungame_battlecity, FunGameBattleCityStyleActivity.class),
+        Bezier(R.string.title_activity_style_bezier, BezierRadarStyleActivity.class),
+        Circle(R.string.title_activity_style_circle, BezierCircleStyleActivity.class),
+        FunGameHitBlock(R.string.title_activity_style_hit_block, FunGameHitBlockStyleActivity.class),
+        FunGameBattleCity(R.string.title_activity_style_battle_city, FunGameBattleCityStyleActivity.class),
         StoreHouse(R.string.title_activity_style_storehouse, StoreHouseStyleActivity.class),
         Classics(R.string.title_activity_style_classics, ClassicsStyleActivity.class),
         ;
@@ -99,6 +106,7 @@ public class RefreshStylesFragment extends Fragment implements AdapterView.OnIte
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), VERTICAL));
             recyclerView.setAdapter(new BaseRecyclerAdapter<Item>(Arrays.asList(Item.values()), simple_list_item_2,this) {
+                @NonNull
                 @Override
                 public SmartViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                     SmartViewHolder holder = super.onCreateViewHolder(parent, viewType);
@@ -129,30 +137,53 @@ public class RefreshStylesFragment extends Fragment implements AdapterView.OnIte
         }
 
 
-        RefreshLayout refreshLayout = (RefreshLayout) root.findViewById(R.id.refreshLayout);
+        RefreshLayout refreshLayout = root.findViewById(R.id.refreshLayout);
         if (refreshLayout != null) {
-            refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            refreshLayout.setOnMultiPurposeListener(new SimpleMultiPurposeListener() {
                 @Override
-                public void onRefresh(final RefreshLayout refreshLayout) {
+                public void onRefresh(@NonNull final RefreshLayout refreshLayout) {
                     refreshLayout.finishRefresh(3000);
-                    refreshLayout.getLayout().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                }
+                @Override
+                public void onLoadMore(@NonNull final RefreshLayout refreshLayout) {
+                    refreshLayout.finishLoadMore(2000);
+                }
+                @Override
+                public void onStateChanged(@NonNull RefreshLayout refreshLayout, @NonNull RefreshState oldState, @NonNull RefreshState newState) {
+                    if (newState == RefreshState.None) {
+                        if (oldState == RefreshState.LoadFinish) {
+                            RefreshFooter refreshFooter = refreshLayout.getRefreshFooter();
+                            if (refreshFooter instanceof RefreshFooterWrapper) {
+                                View footerView = refreshFooter.getView();
+                                if (footerView instanceof TaurusHeader) {
+                                    refreshLayout.setRefreshFooter(new RefreshFooterWrapper(new DropBoxHeader(getContext())));
+                                } else if (footerView instanceof DropBoxHeader) {
+                                    refreshLayout.setRefreshFooter(new RefreshFooterWrapper(new DeliveryHeader(getContext())));
+                                } else if (footerView instanceof DeliveryHeader) {
+                                    refreshLayout.setRefreshFooter(new RefreshFooterWrapper(new BezierCircleHeader(getContext())));
+                                } else {
+                                    refreshLayout.setRefreshFooter(new BallPulseFooter(getContext()));
+                                }
+                            }
+                        } else if (oldState == RefreshState.RefreshFinish) {
                             RefreshHeader refreshHeader = refreshLayout.getRefreshHeader();
                             if (refreshHeader instanceof RefreshHeaderWrapper) {
+                                refreshLayout.setEnableHeaderTranslationContent(false);
+                                refreshLayout.setRefreshHeader(new MaterialHeader(getContext()));
+                            } else if (refreshHeader instanceof MaterialHeader) {
+                                refreshLayout.setEnableHeaderTranslationContent(true);
                                 refreshLayout.setRefreshHeader(new PhoenixHeader(getContext()));
                             } else if (refreshHeader instanceof PhoenixHeader) {
-                                refreshLayout.setRefreshHeader(new DropboxHeader(getContext()));
-                            } else if (refreshHeader instanceof DropboxHeader) {
+                                refreshLayout.setRefreshHeader(new DropBoxHeader(getContext()));
+                            } else if (refreshHeader instanceof DropBoxHeader) {
                                 refreshLayout.setRefreshHeader(new FunGameHitBlockHeader(getContext()));
                             } else if (refreshHeader instanceof FunGameHitBlockHeader) {
                                 refreshLayout.setRefreshHeader(new ClassicsHeader(getContext()));
                             } else {
                                 refreshLayout.setRefreshHeader(new RefreshHeaderWrapper(new BallPulseFooter(getContext())));
                             }
-                            refreshLayout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white);
                         }
-                    },4000);
+                    }
                 }
             });
         }

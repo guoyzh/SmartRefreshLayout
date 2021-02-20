@@ -1,19 +1,13 @@
-# Android Smart Refresh Layout Framework
+# SmartRefreshLayout
 
 [![License](https://img.shields.io/badge/License%20-Apache%202-337ab7.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Arsenal](https://img.shields.io/badge/Arsenal%20-%20SmartRefresh-4cae4c.svg)](https://android-arsenal.com/details/1/6001)
-[![Jcenter](https://img.shields.io/badge/%20Jcenter%20-1.0.4-5bc0de.svg)](https://bintray.com/scwang90/maven/SmartRefreshLayout/_latestVersion)
+[![JCenter](https://img.shields.io/badge/%20Jcenter%20-1.1.2-5bc0de.svg)](https://bintray.com/scwang90/maven/SmartRefreshLayout/_latestVersion)
 [![MinSdk](https://img.shields.io/badge/%20MinSdk%20-%2012%2B%20-f0ad4e.svg)](https://android-arsenal.com/api?level=12)
-[![Methods](https://img.shields.io/badge/Methods%20%7C%20Size%20-%201362%20%7C%20138%20KB-d9534f.svg)](http://www.methodscount.com/?lib=com.scwang.smartrefresh%3ASmartRefreshLayout%3A1.0.4)
-
-<!-- [![Platform](https://img.shields.io/badge/Platform-Android-f0ad4e.svg)](https://www.android.com) -->
-<!-- [![Author](https://img.shields.io/badge/Author-scwang90-11bbff.svg)](https://github.com/scwang90) -->
-
+[![Methods](https://img.shields.io/badge/Methods%20%7C%20Size%20-%20784%20%7C%20122%20KB-d9534f.svg)](http://www.methodscount.com/?lib=com.scwang.smartrefresh%3ASmartRefreshLayout%3A1.1.0)
 
 ## English | [中文](README.md)
 
-As the name says, SmartRefreshLayout is a "smart" or "intelligent" pull-down refresh layout，because of its "smart", it does not just support all the Views , but also support multi-layered nested view structures.  
-It extends from ViewGroup rather than FrameLayout or LinearLayout, this not only improves its performance, but also enables it to absorb the advantages of various refresh layouts in fashion now，Including Google official [SwipeRefreshLayout](https://developer.android.com/reference/android/support/v4/widget/SwipeRefreshLayout.html)、[TwinklingRefreshLayout](https://github.com/lcodecorex/TwinklingRefreshLayout) 、[Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh). Also it integrates various cool Headers and Footers.  
 SmartRefreshLayout's goal is to build a strong, stable and mature pull-down refresh layout framework, and to integrate all kinds of cool, diverse, practical and beautiful Headers and Footers.
 
 ## Features
@@ -29,6 +23,9 @@ SmartRefreshLayout's goal is to build a strong, stable and mature pull-down refr
  - Support setting a variety of transformations (Translation, stretching, behind fixed, top fixed, full screen view) for Headers and Footers.
  - Support rewrite and extension, internal implementation without private methods and fields.
  - Support automatically cross-border rebound for all rolling Views (Listview、RecyclerView、ScrollView、WebView...View).
+ - Support the interchange of Header and Footer
+ - Support AndroidX
+ - Support [HorizontalRefresh](https://github.com/scwang90/SmartRefreshHorizontal)
  
 ## Gateway
 
@@ -44,7 +41,7 @@ SmartRefreshLayout's goal is to build a strong, stable and mature pull-down refr
 ![](art/png_apk_rqcode.png)
 
 #### Practical
-|Weibo|Feedlist|
+|Weibo|FeedList|
 |:---:|:---:|
 |![](art/gif_practive_weibo.gif)|![](art/gif_practive_feedlist.gif)|
 
@@ -54,10 +51,10 @@ SmartRefreshLayout's goal is to build a strong, stable and mature pull-down refr
 
 #### Style
 
-|Style|Delivery|Dropbox|
+|Style|Delivery|DropBox|
 |:---:|:---:|:---:|
 |Demo|![](art/gif_Delivery.gif)|![](art/gif_Dropbox.gif)|
-|Design|[Refresh-your-delivery](https://dribbble.com/shots/2753803-Refresh-your-delivery)|[Dropbox-Refresh](https://dribbble.com/shots/3470499-Dropbox-Refresh)|
+|Design|[Refresh-your-delivery](https://dribbble.com/shots/2753803-Refresh-your-delivery)|[DropBox-Refresh](https://dribbble.com/shots/3470499-DropBox-Refresh)|
 
 The two above headers are implemented by myself, The following headers are collected and optimized from excellent Headers on github
 
@@ -101,13 +98,20 @@ Please rest assured that I have divided it into three packages, when used to ref
 
 ## Usage
 #### 1.Add a gradle dependency.
+
+[【V2.0.0】](https://github.com/scwang90/SmartRefreshLayout/blob/master/README_EN.md#1add-a-gradle-dependency)
+main change is to subcontract SmartRefreshLayout to reduce unnecessary dependencies and avoid code redundancy.
+welcome to experience.
+
 ```
-compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.5.1'
-compile 'com.scwang.smartrefresh:SmartRefreshHeader:1.0.5.1'//If you use the special Header
+implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.3'
+implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.3'  //If you use the special Header
+```
+If you use AndroidX, add it to gradle.properties
 
-compile 'com.android.support:appcompat-v7:25.3.1'
-compile 'com.android.support:design:25.3.1'//（Not necessary，Can solve problems that cannot be previewed）
-
+```
+android.useAndroidX=true
+android.enableJetifier=true
 ```
 
 #### 2.Add SmartRefreshLayout in the layout xml.
@@ -118,7 +122,7 @@ compile 'com.android.support:design:25.3.1'//（Not necessary，Can solve proble
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview"
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
@@ -135,10 +139,10 @@ refreshLayout.setOnRefreshListener(new OnRefreshListener() {
         refreshlayout.finishRefresh(2000);
     }
 });
-refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
     @Override
-    public void onLoadmore(RefreshLayout refreshlayout) {
-        refreshlayout.finishLoadmore(2000);
+    public void onLoadMore(RefreshLayout refreshlayout) {
+        refreshlayout.finishLoadMore(2000);
     }
 });
 ```
@@ -150,13 +154,13 @@ refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
 public class App extends Application {
     public void onCreate() {
         super.onCreate();
-        SmartRefreshLayout.setDefaultRefreshHeaderCreater(new DefaultRefreshHeaderCreater() {
+        SmartRefreshLayout.setDefaultRefreshHeaderCreator(new DefaultRefreshHeaderCreator() {
                 @Override
                 public RefreshHeader createRefreshHeader(Context context, RefreshLayout layout) {
                     return new ClassicsHeader(context).setSpinnerStyle(SpinnerStyle.Translate);
                 }
             });
-        SmartRefreshLayout.setDefaultRefreshFooterCreater(new DefaultRefreshFooterCreater() {
+        SmartRefreshLayout.setDefaultRefreshFooterCreator(new DefaultRefreshFooterCreator() {
                 @Override
                 public RefreshFooter createRefreshFooter(Context context, RefreshLayout layout) {
                     return new ClassicsFooter(context).setSpinnerStyle(SpinnerStyle.Translate);
@@ -188,7 +192,7 @@ Note: this method is the lowest priority.
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/padding_common"
+        android:padding="@dimen/dimenPaddingCommon"
         android:background="@android:color/white"
         android:text="@string/description_define_in_xml"/>
     <com.scwang.smartrefresh.layout.footer.ClassicsFooter
@@ -216,22 +220,41 @@ This library does't use serialization and deserialization, JNI, reflection, so t
 
 ## Donate
 
-If you like this library's design, feel it help to you, you can point the upper right corner "Star" support Thank you! ^ _ ^  
-You can also scan the qr code below to ask the author to drink a cup of coffee.
+If you like this library's design, feel it help to you, you can point the upper right corner "Star" support Thank you! ^ _ ^
+You can also click the PayPal below to ask the author to drink a cup of coffee.
 
-![](art/pay_alipay.jpg) ![](art/pay_wxpay.jpg) ![](art/pay_tencent.jpg)
+[![](https://www.paypalobjects.com/webstatic/i/logo/rebrand/ppcom.svg 'click to donate')](https://www.paypal.me/scwang90)
 
-If in the donation message note name, will be record to the list  
+If in the donation message note name, it will be record to the list  
 [Donation list](art/md_donationlist.md)
+
+#### blogroll
+[github/Loror](https://github.com/Loror)  
+[github/faith-hb/WidgetCase](https://github.com/faith-hb/WidgetCase)  
+[github/Bamboy120315/Freedom](https://github.com/Bamboy120315/Freedom)  
+[github/TommyLemon/APIJSON](https://github.com/TommyLemon/APIJSON)  
+[github/dengyuhan](https://github.com/dengyuhan)  
+[github/zrp2017](https://github.com/zrp2017)  
+[github/fly803/BaseProject](https://github.com/fly803/BaseProject)  
+[github/razerdp](https://github.com/razerdp)  
+[github/SuperChenC/s-mvp](https://github.com/SuperChenC/s-mvp)  
+[github/KingJA/LoadSir](https://github.com/KingJA/LoadSir)  
+[github/jianshijiuyou](https://github.com/jianshijiuyou)  
+[github/zxy198717](https://github.com/zxy198717)  
+[github/addappcn](https://github.com/addappcn)  
+[github/RainliFu](https://github.com/RainliFu)  
+[github/sugarya](https://github.com/sugarya)  
+[github/stormzhang](https://github.com/stormzhang)  
 
 ## Discuss
 
 Contact me: scwang90@hotmail.com 
 
 ## Thanks
-[SwipeRefreshLayout](https://developer.android.com/reference/android/support/v4/widget/SwipeRefreshLayout.html)
-[TwinklingRefreshLayout](https://github.com/lcodecorex/TwinklingRefreshLayout)
-[android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh)
+[SwipeRefreshLayout](https://developer.android.com/reference/android/support/v4/widget/SwipeRefreshLayout.html)  
+[Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh)  
+[TwinklingRefreshLayout](https://github.com/lcodecorex/TwinklingRefreshLayout)  
+[BeautifulRefreshLayout](https://github.com/android-cjj/BeautifulRefreshLayout)
 
 ## Other Works
 [MultiWaveHeader](https://github.com/scwang90/MultiWaveHeader)

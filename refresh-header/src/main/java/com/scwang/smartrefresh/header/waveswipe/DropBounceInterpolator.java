@@ -14,9 +14,6 @@ package com.scwang.smartrefresh.header.waveswipe;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import android.content.Context;
-import android.util.AttributeSet;
 import android.view.animation.Interpolator;
 
 /**
@@ -26,13 +23,6 @@ import android.view.animation.Interpolator;
  * WavePullToRefresh/DropBounceInterpolator.gcxにグラフの詳細
  */
 public class DropBounceInterpolator implements Interpolator {
-
-    public DropBounceInterpolator() {
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    public DropBounceInterpolator(Context context, AttributeSet attrs) {
-    }
 
     /**
      * {@inheritDoc}

@@ -1,6 +1,7 @@
 package com.scwang.refreshlayout.activity.practice;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -12,9 +13,8 @@ import com.scwang.refreshlayout.R;
 import com.scwang.refreshlayout.util.StatusBarUtil;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener;
-import com.scwang.smartrefresh.layout.util.DensityUtil;
+import com.scwang.smartrefresh.layout.util.SmartUtil;
 
 /**
  * 微博主页
@@ -29,7 +29,7 @@ public class WeiboPracticeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_practice_weibo);
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -40,11 +40,12 @@ public class WeiboPracticeActivity extends AppCompatActivity {
         //状态栏透明和间距处理
         StatusBarUtil.immersive(this);
         StatusBarUtil.setPaddingSmart(this, toolbar);
+        StatusBarUtil.setMargin(this, findViewById(R.id.header));
 
         final View parallax = findViewById(R.id.parallax);
         final View buttonBar = findViewById(R.id.buttonBarLayout);
-        final NestedScrollView scrollView = (NestedScrollView)findViewById(R.id.scrollView);
-        final RefreshLayout refreshLayout = (RefreshLayout)findViewById(R.id.refreshLayout);
+        final NestedScrollView scrollView = findViewById(R.id.scrollView);
+        final RefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
 
         findViewById(R.id.attention).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,29 +60,38 @@ public class WeiboPracticeActivity extends AppCompatActivity {
             }
         });
 
-        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(RefreshLayout refreshLayout) {
-                refreshLayout.finishLoadMore(2000);
-            }
-        });
         refreshLayout.setOnMultiPurposeListener(new SimpleMultiPurposeListener() {
             @Override
-            public void onHeaderPulling(RefreshHeader header, float percent, int offset, int bottomHeight, int extendHeight) {
-                mOffset = offset / 2;
-                parallax.setTranslationY(mOffset - mScrollY);
-                toolbar.setAlpha(1 - Math.min(percent, 1));
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                refreshLayout.finishRefresh(3000);
+            }
+
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                refreshLayout.finishLoadMore(2000);
             }
             @Override
-            public void onHeaderReleasing(RefreshHeader header, float percent, int offset, int bottomHeight, int extendHeight) {
+            public void onHeaderMoving(RefreshHeader header, boolean isDragging, float percent, int offset, int headerHeight, int maxDragHeight) {
                 mOffset = offset / 2;
                 parallax.setTranslationY(mOffset - mScrollY);
                 toolbar.setAlpha(1 - Math.min(percent, 1));
             }
+//            @Override
+//            public void onHeaderPulling(@NonNull RefreshHeader header, float percent, int offset, int bottomHeight, int maxDragHeight) {
+//                mOffset = offset / 2;
+//                parallax.setTranslationY(mOffset - mScrollY);
+//                toolbar.setAlpha(1 - Math.min(percent, 1));
+//            }
+//            @Override
+//            public void onHeaderReleasing(@NonNull RefreshHeader header, float percent, int offset, int bottomHeight, int maxDragHeight) {
+//                mOffset = offset / 2;
+//                parallax.setTranslationY(mOffset - mScrollY);
+//                toolbar.setAlpha(1 - Math.min(percent, 1));
+//            }
         });
         scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             private int lastScrollY = 0;
-            private int h = DensityUtil.dp2px(170);
+            private int h = SmartUtil.dp2px(170);
             private int color = ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary)&0x00ffffff;
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {

@@ -12,15 +12,15 @@ import android.widget.Toast;
 
 import com.scwang.refreshlayout.R;
 import com.scwang.refreshlayout.util.StatusBarUtil;
-import com.scwang.refreshlayout.widget.TwoLevelHeader;
+import com.scwang.smartrefresh.layout.api.OnTwoLevelListener;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.header.TwoLevelHeader;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 /**
  * 二级刷新
- * Created by SCWANG on 2018/1/7.
+ * Created by scwang on 2018/1/7.
  */
-
 public class TwoLevelPracticeFragment extends Fragment {
 
     @Override
@@ -32,8 +32,8 @@ public class TwoLevelPracticeFragment extends Fragment {
     public void onViewCreated(@NonNull final View root, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(root, savedInstanceState);
 
-        final Toolbar toolbar = (Toolbar)root.findViewById(R.id.toolbar);
-        final TwoLevelHeader header = (TwoLevelHeader)root.findViewById(R.id.header);
+        final Toolbar toolbar = root.findViewById(R.id.toolbar);
+        final TwoLevelHeader header = root.findViewById(R.id.header);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,11 +41,11 @@ public class TwoLevelPracticeFragment extends Fragment {
             }
         });
 
-        final RefreshLayout refreshLayout = (RefreshLayout)root.findViewById(R.id.refreshLayout);
+        final RefreshLayout refreshLayout = root.findViewById(R.id.refreshLayout);
 
-        header.setOnTwoLevelListener(new TwoLevelHeader.OnTwoLevelListener() {
+        header.setOnTwoLevelListener(new OnTwoLevelListener() {
             @Override
-            public boolean onTwoLevel(RefreshLayout refreshLayout) {
+            public boolean onTwoLevel(@NonNull RefreshLayout refreshLayout) {
                 Toast.makeText(getContext(),"触发二楼事件",Toast.LENGTH_SHORT).show();
                 refreshLayout.getLayout().postDelayed(new Runnable() {
                     @Override
@@ -59,7 +59,7 @@ public class TwoLevelPracticeFragment extends Fragment {
 
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 Toast.makeText(getContext(),"触发刷新事件",Toast.LENGTH_SHORT).show();
                 refreshLayout.finishRefresh(2000);
             }
